@@ -1,13 +1,17 @@
 # Climatee Weather App 🌤️
 
+**🌐 Live Demo: [https://climatee-production.up.railway.app](https://climatee-production.up.railway.app)**
+
 A simple weather web application built with Django that shows current weather and forecasts for any city. I created this project to learn Django and API integration.
 
-## What it does
+## ✨ Features
 
-- Shows current weather (temperature, humidity, wind speed)
-- Gets your location automatically or search any city
-- Displays 24-hour forecast 
-- Works on mobile and desktop
+- 🌍 **Auto Location Detection** - Get weather for your current location instantly
+- 🔍 **City Search** - Search weather for any city worldwide  
+- 📊 **Current Weather** - Temperature, humidity, wind speed, and conditions
+- ⏰ **24-Hour Forecast** - Detailed hourly predictions
+- 📱 **Mobile Responsive** - Works perfectly on all devices
+- 🚀 **Live Deployment** - Hosted on Railway cloud platform
 
 ## Screenshots
 
