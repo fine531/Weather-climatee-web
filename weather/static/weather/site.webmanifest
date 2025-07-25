@@ -1,0 +1,26 @@
+{
+    "name": "Climatee Weather App",
+    "short_name": "Climatee",
+    "description": "Get current weather and 24-hour forecast for any city worldwide",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#2196F3",
+    "theme_color": "#2196F3",
+    "icons": [
+        {
+            "src": "/static/weather/images/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/weather/images/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/weather/images/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ]
+}

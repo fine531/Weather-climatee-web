@@ -1,0 +1,790 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Get current weather and 24-hour forecast for any city worldwide">
+    <meta name="author" content="Climatee Weather App">
+    <meta name="keywords" content="weather, forecast, climate, temperature, humidity, wind speed">
+    
+    <!-- Dynamic Title -->
+    {% if weather_data %}
+    <title>{{ weather_data.current.location }} Weather | Climatee</title>
+    {% else %}
+    <title>Climatee - Weather Forecast App</title>
+    {% endif %}
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'weather/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" type="image/svg+xml" href="{% static 'weather/images/favicon.svg' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'weather/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'weather/images/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'weather/images/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'weather/site.webmanifest' %}">
+    <meta name="theme-color" content="#2196F3">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        .current-location-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            min-height: 200px;
+        }
+        
+        .weather-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .location-weather-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-section {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .forecast-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            transition: transform 0.2s ease;
+        }
+        
+        .forecast-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .temperature {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        
+        .forecast-icon {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .weather-icon {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .main-container {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .loader-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Mobile Responsiveness Improvements */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .temperature {
+                font-size: 2rem;
+            }
+            
+            .current-location-hero {
+                padding: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .location-weather-card {
+                padding: 1rem !important;
+                margin-bottom: 1rem;
+            }
+            
+            .weather-card {
+                margin-bottom: 1rem;
+            }
+            
+            .forecast-card {
+                margin-bottom: 0.5rem;
+            }
+            
+            .search-section {
+                padding: 1rem !important;
+            }
+            
+            .btn-lg {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .d-flex.gap-3.flex-wrap {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .weather-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .forecast-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .h1 {
+                font-size: 1.5rem;
+            }
+            
+            .welcome-section {
+                padding: 2rem !important;
+            }
+        }
+
+        /* Touch improvements for mobile */
+        .btn, .form-control {
+            min-height: 44px; /* iOS recommended touch target size */
+        }
+        
+        /* Prevent zoom on form inputs on iOS */
+        input[type="text"], input[type="search"] {
+            font-size: 16px;
+        }
+
+        /* Mobile form improvements */
+        @media (max-width: 768px) {
+            .form-control-lg {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+            
+            #weatherForm .d-flex.gap-2 {
+                gap: 0.5rem !important;
+            }
+            
+            #weatherForm button {
+                white-space: nowrap;
+            }
+            
+            /* Better touch targets for mobile */
+            .forecast-card {
+                min-height: 200px;
+                cursor: pointer;
+            }
+            
+            /* Horizontal scroll for forecast on very small screens */
+            .forecast-scroll {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 1rem;
+            }
+            
+            .forecast-scroll .row {
+                flex-wrap: nowrap !important;
+                width: max-content;
+            }
+            
+            .forecast-scroll .col-md-3 {
+                flex: 0 0 200px;
+                max-width: 200px;
+            }
+        }
+
+        /* Extra small devices improvements */
+        @media (max-width: 576px) {
+            .forecast-scroll .col-md-3 {
+                flex: 0 0 160px;
+                max-width: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="bi bi-cloud-sun"></i> Climatee
+            </h1>
+            <p class="lead text-muted">Your reliable weather companion</p>
+        </div>
+        
+        <!-- Current Location Hero Section -->
+        <div class="current-location-hero p-4 mb-4" id="currentLocationHero" style="display: none;">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="location-weather-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-geo-alt-fill me-2 h4 mb-0"></i>
+                            <h3 class="mb-0" id="currentLocationName">Your Current Location</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <img id="currentLocationIcon" src="" alt="Weather Icon" style="width: 80px; height: 80px;">
+                                    <div class="ms-3">
+                                        <div class="h1 mb-0" id="currentLocationTemp">--°C</div>
+                                        <div class="h6" id="currentLocationDesc">Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="weather-details">
+                                    <div class="mb-2">
+                                        <i class="bi bi-droplet me-2"></i>
+                                        <span>Humidity: <span id="currentLocationHumidity">--%</span></span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="bi bi-wind me-2"></i>
+                                        <span>Wind: <span id="currentLocationWind">-- m/s</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="location-weather-card p-3">
+                        <h5 class="mb-3">Quick Actions</h5>
+                        <button class="btn btn-light btn-sm mb-2 w-100" id="refreshLocationBtn">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh Location Weather
+                        </button>
+                        <button class="btn btn-outline-light btn-sm w-100" id="changeLocationBtn">
+                            <i class="bi bi-search"></i> Search Other Cities
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Location Detection Section -->
+        <div class="text-center mb-4" id="locationPrompt">
+            <div class="welcome-section p-5">
+                <h2 class="mb-3">🌍 Welcome to Climatee!</h2>
+                <p class="lead mb-4">Get instant weather for your current location or search for any city worldwide</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <button type="button" class="btn btn-light btn-lg" id="detectLocationBtn">
+                        <i class="bi bi-geo-alt-fill"></i> Detect My Location
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-lg" id="skipLocationBtn">
+                        <i class="bi bi-search"></i> Search Cities Instead
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container p-4" id="mainContainer" style="display: none;">            
+            <!-- Weather Search Form -->
+            <div class="search-section">
+                <h4 class="text-center mb-4">🔍 Search Weather by City</h4>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <form method="post" id="weatherForm" class="d-flex flex-column flex-md-row gap-2 mb-3">
+                            {% csrf_token %}
+                            <input 
+                                type="text" 
+                                name="location" 
+                                id="locationInput"
+                                class="form-control form-control-lg flex-grow-1" 
+                                placeholder="Enter city name (e.g., London, New York, Tokyo)"
+                                value="{{ location_searched|default:'' }}"
+                                required
+                            >
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                                {% if weather_data %}
+                                <button type="button" class="btn btn-outline-secondary btn-lg" id="refreshBtn">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div class="loader-container" id="loader">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-primary">Getting weather data...</p>
+                </div>
+            </div>
+            
+            <!-- Weather Results -->
+            {% if weather_data %}
+            <div class="weather-results">
+                <!-- Current Weather Card -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="weather-card p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-geo-alt-fill me-2"></i>
+                                        <h2 class="mb-0">{{ weather_data.current.location }}, {{ weather_data.current.country }}</h2>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                <img 
+                                                    src="https://openweathermap.org/img/wn/{{ weather_data.current.icon }}@2x.png" 
+                                                    alt="{{ weather_data.current.description }}"
+                                                    class="weather-icon me-3"
+                                                >
+                                                <div>
+                                                    <div class="temperature">{{ weather_data.current.temperature }}°C</div>
+                                                    <p class="mb-0 fs-5">{{ weather_data.current.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="weather-details">
+                                                <div class="mb-2">
+                                                    <i class="bi bi-wind me-2"></i>
+                                                    <span>Wind Speed: {{ weather_data.current.wind_speed }} m/s</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <i class="bi bi-droplet me-2"></i>
+                                                    <span>Humidity: {{ weather_data.current.humidity }}%</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <i class="bi bi-cloud-rain me-2"></i>
+                                                    <span>Rain: {{ weather_data.current.rain_probability }}mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <h5 class="mb-3">Weather Details</h5>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="p-3">
+                                                    <i class="bi bi-wind fs-2"></i>
+                                                    <p class="mb-0 fw-bold">{{ weather_data.current.wind_speed }}m/s</p>
+                                                    <small>Wind</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="p-3">
+                                                    <i class="bi bi-droplet fs-2"></i>
+                                                    <p class="mb-0 fw-bold">{{ weather_data.current.humidity }}%</p>
+                                                    <small>Humidity</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="p-3">
+                                                    <i class="bi bi-cloud-rain fs-2"></i>
+                                                    <p class="mb-0 fw-bold">{{ weather_data.current.rain_probability }}mm</p>
+                                                    <small>Rain</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 24-Hour Forecast -->
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class="mb-3">
+                            <i class="bi bi-clock"></i> 24-Hour Forecast
+                        </h3>
+                        <div class="forecast-scroll">
+                            <div class="row g-2">
+                                {% for forecast in weather_data.forecast %}
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="forecast-card p-3 text-center h-100">
+                                        <p class="fw-bold mb-1">{{ forecast.time }}</p>
+                                        <small class="text-muted">{{ forecast.date }}</small>
+                                        <img 
+                                            src="https://openweathermap.org/img/wn/{{ forecast.icon }}.png" 
+                                            alt="{{ forecast.description }}"
+                                            class="forecast-icon my-2"
+                                        >
+                                        <p class="fs-4 fw-bold text-primary mb-1">{{ forecast.temperature }}°C</p>
+                                        <p class="small mb-1">{{ forecast.description }}</p>
+                                        <div class="d-flex justify-content-between small text-muted">
+                                            <span>
+                                                <i class="bi bi-wind"></i> {{ forecast.wind_speed }}m/s
+                                            </span>
+                                            <span>
+                                                <i class="bi bi-droplet"></i> {{ forecast.rain_probability }}mm
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Get DOM elements
+        const weatherForm = document.getElementById('weatherForm');
+        const locationInput = document.getElementById('locationInput');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const detectLocationBtn = document.getElementById('detectLocationBtn');
+        const skipLocationBtn = document.getElementById('skipLocationBtn');
+        const refreshLocationBtn = document.getElementById('refreshLocationBtn');
+        const changeLocationBtn = document.getElementById('changeLocationBtn');
+        const currentLocationHero = document.getElementById('currentLocationHero');
+        const locationPrompt = document.getElementById('locationPrompt');
+        const mainContainer = document.getElementById('mainContainer');
+        const loader = document.getElementById('loader');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        // Initialize the page
+        window.addEventListener('DOMContentLoaded', function() {
+            const hasWeatherData = {% if weather_data %}true{% else %}false{% endif %};
+            
+            if (hasWeatherData) {
+                // Show search form if we have search results
+                showSearchSection();
+            } else {
+                // Show location prompt for new users
+                showLocationPrompt();
+            }
+        });
+        
+        // Show different sections
+        function showLocationPrompt() {
+            locationPrompt.style.display = 'block';
+            currentLocationHero.style.display = 'none';
+            mainContainer.style.display = 'none';
+        }
+        
+        function showCurrentLocationHero() {
+            locationPrompt.style.display = 'none';
+            currentLocationHero.style.display = 'block';
+            mainContainer.style.display = 'block';
+        }
+        
+        function showSearchSection() {
+            locationPrompt.style.display = 'none';
+            currentLocationHero.style.display = 'none';
+            mainContainer.style.display = 'block';
+        }
+        
+        // Event listeners for location buttons
+        if (detectLocationBtn) {
+            detectLocationBtn.addEventListener('click', function() {
+                getCurrentLocation();
+            });
+        }
+        
+        if (skipLocationBtn) {
+            skipLocationBtn.addEventListener('click', function() {
+                showSearchSection();
+            });
+        }
+        
+        if (refreshLocationBtn) {
+            refreshLocationBtn.addEventListener('click', function() {
+                getCurrentLocation();
+            });
+        }
+        
+        if (changeLocationBtn) {
+            changeLocationBtn.addEventListener('click', function() {
+                showSearchSection();
+            });
+        }
+        
+        // Get current location using geolocation API
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                showLocationError('Geolocation is not supported by this browser.');
+                return;
+            }
+            
+            showLoader();
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    console.log('Location detected:', latitude, longitude);
+                    // Fetch weather data for current location
+                    fetchWeatherByLocation(latitude, longitude);
+                },
+                function(error) {
+                    hideLoader();
+                    let errorMessage = 'Unable to retrieve your location. ';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage += 'Please allow location access and try again.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage += 'Location information is unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage += 'Location request timed out.';
+                            break;
+                        default:
+                            errorMessage += 'An unknown error occurred.';
+                            break;
+                    }
+                    
+                    showLocationError(errorMessage);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 300000 // 5 minutes
+                }
+            );
+        }
+        
+        // Fetch weather data using coordinates
+        function fetchWeatherByLocation(latitude, longitude) {
+            if (!csrfToken) {
+                hideLoader();
+                showLocationError('Security token not found. Please refresh the page.');
+                return;
+            }
+            
+            console.log('Fetching weather for coordinates:', latitude, longitude);
+            
+            fetch('/weather-by-location/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Weather data received:', data);
+                hideLoader();
+                if (data.success) {
+                    // Update current location hero section
+                    updateCurrentLocationHero(data.data);
+                    showCurrentLocationHero();
+                } else {
+                    showLocationError(data.error || 'Failed to get weather for your location.');
+                }
+            })
+            .catch(error => {
+                hideLoader();
+                console.error('Location weather error:', error);
+                showLocationError('Failed to get weather for your location. Please try again or search manually.');
+            });
+        }
+        
+        // Update current location hero section with weather data
+        function updateCurrentLocationHero(weatherData) {
+            const current = weatherData.current;
+            
+            document.getElementById('currentLocationName').textContent = current.location + ', ' + current.country;
+            document.getElementById('currentLocationTemp').textContent = current.temperature + '°C';
+            document.getElementById('currentLocationDesc').textContent = current.description;
+            document.getElementById('currentLocationHumidity').textContent = current.humidity + '%';
+            document.getElementById('currentLocationWind').textContent = current.wind_speed + ' m/s';
+            document.getElementById('currentLocationIcon').src = `https://openweathermap.org/img/wn/${current.icon}@2x.png`;
+            document.getElementById('currentLocationIcon').alt = current.description;
+        }
+        
+        // Show location error with styled alert
+        function showLocationError(message) {
+            const alertHtml = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Add new alert to the top of the container
+            document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+            
+            // Show search section as fallback
+            showSearchSection();
+        }
+        
+        // Show/hide loader
+        function showLoader() {
+            if (loader) {
+                loader.style.display = 'block';
+            }
+            
+            // Disable buttons
+            const buttons = [detectLocationBtn, skipLocationBtn, refreshLocationBtn];
+            buttons.forEach(btn => {
+                if (btn) btn.disabled = true;
+            });
+        }
+        
+        function hideLoader() {
+            if (loader) {
+                loader.style.display = 'none';
+            }
+            
+            // Enable buttons
+            const buttons = [detectLocationBtn, skipLocationBtn, refreshLocationBtn];
+            buttons.forEach(btn => {
+                if (btn) btn.disabled = false;
+            });
+        }
+        
+        // Form submission for manual search
+        if (weatherForm) {
+            weatherForm.addEventListener('submit', function(e) {
+                if (locationInput && locationInput.value.trim()) {
+                    showLoader();
+                }
+            });
+        }
+        
+        // Refresh button functionality for manual search
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                const location = locationInput ? locationInput.value.trim() : '';
+                if (!location) {
+                    alert('Please enter a location first.');
+                    return;
+                }
+                
+                if (!csrfToken) {
+                    alert('Security token not found. Please refresh the page.');
+                    return;
+                }
+                
+                showLoader();
+                
+                fetch('/refresh/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        location: location
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoader();
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error('Refresh error:', error);
+                    alert('Error refreshing data. Please try again.');
+                });
+            });
+        }
+        
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                try {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                } catch (error) {
+                    console.warn('Bootstrap Alert not available:', error);
+                    alert.style.display = 'none';
+                }
+            });
+        }, 8000);
+    </script>
+</body>
+</html>

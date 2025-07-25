@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Generator</title>
+    <style>
+        canvas { border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <canvas id="faviconCanvas" width="32" height="32"></canvas>
+    <script>
+        const canvas = document.getElementById('faviconCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 0, 32);
+        gradient.addColorStop(0, '#2196F3');
+        gradient.addColorStop(1, '#64B5F6');
+        
+        // Draw background
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 32, 32);
+        
+        // Draw sun
+        ctx.fillStyle = '#FFD600';
+        ctx.beginPath();
+        ctx.arc(16, 12, 8, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw cloud
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(16, 22, 10, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(10, 22, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(22, 22, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Convert to ICO format would require additional processing
+        console.log('Favicon drawn on canvas');
+    </script>
+</body>
+</html>
