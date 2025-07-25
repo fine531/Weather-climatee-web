@@ -4,6 +4,8 @@
 
 A simple weather web application built with Django that shows current weather and forecasts for any city. I created this project to learn Django and API integration.
 
+https://roadmap.sh/projects/weather-app
+
 ## ✨ Features
 
 - 🌍 **Auto Location Detection** - Get weather for your current location instantly
@@ -167,3 +169,4 @@ If you run into any problems:
 ## License
 
 Feel free to use this code for learning or your own projects!
+
