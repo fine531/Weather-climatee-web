@@ -1,4 +1,4 @@
-# Climatee Weather App 🌤️
+# Climatee Weather 🌤️
 
 **🌐 Live Demo: [https://climatee-production.up.railway.app](https://climatee-production.up.railway.app)**
 
