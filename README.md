@@ -13,9 +13,24 @@ A simple weather web application built with Django that shows current weather an
 - 📱 **Mobile Responsive** - Works perfectly on all devices
 - 🚀 **Live Deployment** - Hosted on Railway cloud platform
 
-## Screenshots
+## 📱 Screenshots
 
-The app has a clean interface with location detection and city search functionality. The weather data is displayed in an easy-to-read format with icons and detailed information.
+### 🏠 Homepage - Clean & Professional
+![Desktop Homepage](./images/desktop-home.png)
+*Beautiful landing page with "Welcome to Climatee!" message and intuitive location/search options*
+
+### 🌤️ Live Weather Results - Karimnagar, IN
+![Weather Details](./images/weather-display.png)
+*Complete weather dashboard showing current conditions (24°C, Overcast Clouds) with detailed metrics (wind speed, humidity, rain) and comprehensive 24-hour forecast with 8 time periods*
+
+### ✨ Key Features Demonstrated
+- **Clean UI Design**: Professional gradient design with clear typography
+- **Real Weather Data**: Live data from OpenWeather API showing actual conditions
+- **Detailed Metrics**: Wind speed (8 m/s), Humidity (91%), Rain information
+- **24-Hour Forecast**: 8 forecast cards with time, temperature, and weather icons
+- **Responsive Layout**: Beautiful card-based layout that works on all devices
+
+> **🚀 Live Demo**: Test all features yourself at [climatee-production.up.railway.app](https://climatee-production.up.railway.app)
 
 ## Tech Stack
 
