@@ -19,6 +19,38 @@ env/
 
 # Database
 db.sqlite3
+*.sqlite3
+
+# Development files
+*.md~
+*_backup.*
+*_old.*
+*_test.*
+*.tmp
+*.temp
+
+# Interview preparation files
+API_KEY_SET*
+DEMO_*
+DEPLOY_*
+DEPLOYMENT_*
+ERROR_*
+ERRORS_*
+INTERVIEW_*
+QUICK_COM*
+REAL_MODEL*
+RESTART_*
+start_climatee*
+test_html.html
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+db.sqlite3
 *.db
 
 # Static files
