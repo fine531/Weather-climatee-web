@@ -1,6 +1,6 @@
 # Climatee Weather 🌤️
 
-**🌐 Live Demo: [https://climatee-production.up.railway.app](https://climatee-production.up.railway.app)**
+**🌐 Live Demo: [https://climatee-weather.onrender.com](https://climatee-weather.onrender.com)**
 
 A simple weather web application built with Django that shows current weather and forecasts for any city. I created this project to learn Django and API integration.
 
