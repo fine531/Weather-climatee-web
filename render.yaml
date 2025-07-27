@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: climatee-weather
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENWEATHER_API_KEY
+        value: fb3e82b296f55d0382210c216d8149bf
